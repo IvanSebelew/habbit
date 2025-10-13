@@ -1,0 +1,42 @@
+.home-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #e0d0ff;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  color: #6a4c9c;
+  font-weight: 600;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-info span {
+  color: lavender;
+}
+
+.logout-button {
+  background-color: #f5f0ff;
+  color: #9674d4;
+  border: 1px solid #e0d0ff;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.logout-button:hover {
+  background-color: #e8e0ff;
+}

@@ -1,0 +1,130 @@
+/* MainPage.css - Лавандовый минималистичный дизайн */
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f9f7fe 0%, #e8e0ff 100%);
+  padding: 20px;
+}
+
+.main-content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(138, 106, 194, 0.15);
+  padding: 40px;
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+}
+
+.main-title {
+  color: #6a4c9c;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.main-description {
+  color: #5d4b7a;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.features {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.feature-card {
+  flex: 1;
+  min-width: 200px;
+  background: #faf8ff;
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid #e0d0ff;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(138, 106, 194, 0.1);
+}
+
+.feature-card h3 {
+  color: #6a4c9c;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.feature-card p {
+  color: #7a6b8f;
+  font-size: 0.95rem;
+}
+
+.auth-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.auth-btn {
+  padding: 14px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.register-btn {
+  background-color: #8a6ac2;
+  color: white;
+  border: 2px solid #8a6ac2;
+}
+
+.login-btn {
+  background-color: white;
+  color: #8a6ac2;
+  border: 2px solid #8a6ac2;
+}
+
+.auth-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(138, 106, 194, 0.2);
+}
+
+.register-btn:hover {
+  background-color: #7a5ab2;
+  border-color: #7a5ab2;
+}
+
+.login-btn:hover {
+  background-color: #f5f0ff;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 30px 20px;
+  }
+  
+  .features {
+    flex-direction: column;
+  }
+  
+  .auth-links {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .auth-btn {
+    width: 100%;
+  }
+}

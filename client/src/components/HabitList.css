@@ -1,0 +1,141 @@
+/* Обновленные стили для трекера привычек */
+.habit-list {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(138, 106, 194, 0.1);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.habit-list h1, .habit-list h2 {
+  color: #5d4b7a;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.habit-list ul {
+  list-style: none;
+  margin-top: 20px;
+}
+
+.habit-list li {
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #faf8ff;
+  margin-bottom: 12px;
+  border-left: 4px solid #8a6ac2;
+  transition: all 0.3s ease;
+}
+
+.habit-list li:hover {
+  background-color: #f3efff;
+  transform: translateY(-2px);
+}
+
+.habit-list li span {
+  flex: 1;
+  color: #5d4b7a;
+  font-weight: 500;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #9e9e9e;
+}
+
+.habit-owner {
+  font-size: 0.85em;
+  color: #8a6ac2;
+  margin-left: 8px;
+}
+
+.your-habit {
+  font-size: 0.85em;
+  color: #5cb85c;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+/* Стили для кнопок */
+.habit-list li button {
+  margin-left: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  transition: all 0.2s;
+}
+
+/* Кнопка редактирования */
+.habit-list li button:nth-of-type(1) {
+  background-color: #e0d6f5;
+  color: #5d4b7a;
+}
+
+/* Кнопка выполнения */
+.habit-list li button:nth-of-type(2) {
+  background-color: #e6f7e6;
+  color: #4caf50;
+}
+
+/* Кнопка удаления */
+.habit-list li button:nth-of-type(3) {
+  background-color: #ffebee;
+  color: #f44336;
+}
+
+.habit-list li button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Стили для формы добавления привычки */
+.habit-list form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  background: #f5f1ff;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.habit-list input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  border: 1px solid #d9c8ff;
+  background: #5d4b7a;
+}
+
+.habit-list select {
+  border: 1px solid #d9c8ff;
+  background-color: white;
+  color: #5d4b7a;
+}
+
+.habit-list form > button {
+  background-color: #8a6ac2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-weight: 500;
+}
+
+.habit-list form > button:hover {
+  background-color: #7a5ab2;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+  .habit-list li {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .habit-list li button {
+    margin: 3px 0;
+    width: 100%;
+  }
+}
