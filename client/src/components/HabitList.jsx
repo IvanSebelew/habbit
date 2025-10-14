@@ -60,7 +60,7 @@ const HabitList = ({username}) => {
     }
   };
 
-  // Удаление привычки
+ 
   const handleDelete = async (habitId) => {
     try {
       await api.delete(`/habits/${habitId}`);
