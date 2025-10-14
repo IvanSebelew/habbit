@@ -70,7 +70,7 @@ const HabitList = ({username}) => {
     }
   };
 
- 
+  // Отметка как выполненной
   const handleComplete = async (habitId) => {
     try {
       const response = await api.put(`/habits/${habitId}`, { completed: true });
