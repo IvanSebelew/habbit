@@ -1,16 +1,18 @@
 
 require('dotenv').config();
-const express = 'express';
-const morgan = 'morgan';
-const cors = 'cors';
-const cookieParser = 'cookie-parser';
-const authRoutes = './src/routes/authRoutes';
-const habitRoutes = './src/routes/habitRoutes';
+const express = require('express');
+const morgan = require('morgan');
+
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+
+const authRoutes = require('./src/routes/authRoutes');
+const habitRoutes = require('./src/routes/habitRoutes')
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-app.use(json());
+app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('dev'));
 app.use(cors({
