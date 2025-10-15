@@ -5,20 +5,18 @@ class AuthController {
     res
       .cookie('refreshToken', result.refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'Strict',
+        
         maxAge: 7 * 24 * 60 * 60 * 1000
       })
-      .cookie('username', result.user.username, { 
+      .cookie('username', result.user.username, {
         httpOnly: false,
-        secure: true,
-        sameSite: 'Strict',
+        
         maxAge: 7 * 24 * 60 * 60 * 1000
       })
-      .json({ 
-        accessToken: result.accessToken, 
+      .json({
+        accessToken: result.accessToken,
         username: result.user.username,
-        role: result.user.role 
+        role: result.user.role
       });
   }
 
@@ -29,8 +27,8 @@ class AuthController {
       await AuthController.handleAuthResponse(res, result);
     } catch (error) {
       console.error('Register error:', error);
-      const status = error.message.includes('обязательны') || 
-                    error.message.includes('уже существует') ? 400 : 500;
+      const status = error.message.includes('обязательны') ||
+        error.message.includes('уже существует') ? 400 : 500;
       res.status(status).json({ message: error.message });
     }
   }
@@ -54,8 +52,6 @@ class AuthController {
       res
         .cookie('refreshToken', tokens.refreshToken, {
           httpOnly: true,
-          secure: true,
-          sameSite: 'Strict',
           maxAge: 7 * 24 * 60 * 60 * 1000
         })
         .json({ accessToken: tokens.accessToken });
@@ -71,12 +67,10 @@ class AuthController {
       res
         .clearCookie('refreshToken', {
           httpOnly: true,
-          secure: true,
-          sameSite: 'Strict'
+
         })
-        .clearCookie('username', { 
-          secure: true,
-          sameSite: 'Strict'
+        .clearCookie('username', {
+
         })
         .json({ message: 'Выход выполнен успешно' });
     } catch (error) {

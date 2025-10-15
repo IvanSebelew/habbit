@@ -21,7 +21,7 @@ module.exports = async (req, res, next) => {
       });
     }
     
-    req.habit = habit;
+    res.locals.habit = habit;
     next();
   } catch (error) {
     console.error('Ошибка проверки владельца привычки:', error);
