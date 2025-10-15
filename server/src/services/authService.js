@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
-const { User } = require('../../db/models');
-const generateTokens = require('../utils/generateToken'); 
+const { Users } = require('../../db/models');
+const generateTokens = require('../utils/generateToken');
 
 class AuthService {
   static async register({ username, email, password }) {
@@ -8,22 +8,20 @@ class AuthService {
       throw new Error('Логин, email и пароль обязательны');
     }
 
-    const existingUser = await User.findOne({ 
-      where: { username } 
-    });
-    
+    const existingUser = await Users.findOne({ where: { username } });
     if (existingUser) {
       throw new Error('Пользователь уже существует');
     }
 
     const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({ 
+    const user = await Users.create({ 
       username, 
       email, 
-      password: hash 
+      password: hash,
+      role: 'user' 
     });
 
-        const { accessToken, refreshToken } = generateTokens(user.id);
+    const { accessToken, refreshToken } = generateTokens(user);
     
     return {
       accessToken,
@@ -31,7 +29,8 @@ class AuthService {
       user: {  
         id: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     };
   }
@@ -41,21 +40,17 @@ class AuthService {
       throw new Error('Логин и пароль обязательны');
     }
 
-    const user = await User.findOne({ 
-      where: { username } 
-    });
-    
+    const user = await Users.findOne({ where: { username } });
     if (!user) {
       throw new Error('Неверные учетные данные');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    
     if (!isPasswordValid) {
       throw new Error('Неверные учетные данные');
     }
 
-    const { accessToken, refreshToken } = generateTokens(user.id);
+    const { accessToken, refreshToken } = generateTokens(user);
     
     return {
       accessToken,
@@ -63,7 +58,8 @@ class AuthService {
       user: {
         id: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     };
   }
@@ -72,18 +68,20 @@ class AuthService {
     if (!userId) {
       throw new Error('Необходим идентификатор пользователя');
     }
-
-    const { accessToken, refreshToken } = generateTokens(userId);
-    
+    const user = await Users.findByPk(userId);
+    if (!user) {
+      throw new Error('Пользователь не найден');
+    }
+    const { accessToken, refreshToken } = generateTokens(user);
     return {
       accessToken,
       refreshToken
     };
   }
+
   static async logout() {
-  
-  return { success: true };
-}
+    return { success: true };
+  }
 }
 
 module.exports = AuthService;

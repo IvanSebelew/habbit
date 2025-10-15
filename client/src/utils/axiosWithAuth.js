@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAccessToken, setAccessToken, clearAccessToken } from '../utils/tokenStore';
 
-const api = axios.create({
+const $api = axios.create({
   baseURL: 'http://localhost:3000',
   withCredentials: true,
   headers: {
@@ -9,7 +9,7 @@ const api = axios.create({
   }
 });
 
-api.interceptors.request.use(config => {
+$api.interceptors.request.use(config => {
   const token = getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -17,7 +17,7 @@ api.interceptors.request.use(config => {
   return config;
 });
 
-api.interceptors.response.use(
+$api.interceptors.response.use(
   response => response,
   async error => {
     const originalRequest = error.config;
@@ -26,17 +26,13 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshResponse = await axios.post(
-          'http://localhost:3000/auth/refresh',
-          {},
-          { withCredentials: true }
-        );
+        const refreshResponse = await $api.post('/auth/refresh', {});
 
         const newToken = refreshResponse.data.accessToken;
         setAccessToken(newToken);
 
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return api(originalRequest);
+        return $api(originalRequest);
       } catch (refreshError) {
         console.error('Refresh token failed:', {
           error: refreshError,
@@ -53,4 +49,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default $api;

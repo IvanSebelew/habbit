@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './registerPage.css';
+import $api from '../../utils/axiosWithAuth';
+import { setAccessToken } from '../../utils/tokenStore';
 
 export function RegisterPage() {
   const [username, setUsername] = useState('');
@@ -23,23 +24,25 @@ export function RegisterPage() {
       setMessage('Пароль должен содержать минимум 1 символов');
       return;
     }
-
     setIsLoading(true);
     setMessage('');
-
     try {
-      const res = await axios.post(
-        'http://localhost:3000/auth/register',
+      const res = await $api.post(
+        '/auth/register',
         { username, email, password },
-        {
-          withCredentials: true,
-          headers: { 'Content-Type': 'application/json' }
-        }
+        
       );
 
       if (res.status >= 200 && res.status < 300) {
         setMessage('Регистрация успешна! Перенаправляем на вход...');
-        setTimeout(() => navigate('/home'), 2000);
+        setAccessToken(response.data.accessToken);
+        
+        console.log('✅ Регистрация успешна, токен сохранен:', {  ////JOPA
+          accessToken: response.data.accessToken ? 'есть' : 'нет',
+          username: response.data.username,
+          role: response.data.role
+        });
+        setTimeout(() => navigate('/home'), 1500);
       }
     } catch (error) {
       if (error.response?.data?.message) {

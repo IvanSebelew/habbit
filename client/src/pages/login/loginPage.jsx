@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './loginPage.css';
+import $api from '../../utils/axiosWithAuth';
+import { setAccessToken } from '../../utils/tokenStore';
 
 export function LoginPage() {
   const [username, setUsername] = useState(''); 
@@ -21,17 +22,19 @@ export function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        'http://localhost:3000/auth/login',
+      const response = await $api.post(
+        '/auth/login',
         { username, password }, 
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true 
-        }
+        
       );
 
       if (response.status === 200) {
-        
+        setAccessToken(response.data.accessToken);
+         console.log('✅ Логин успешен, токен сохранен:', {
+          accessToken: response.data.accessToken ? 'есть' : 'нет',
+          username: response.data.username,
+          role: response.data.role
+        });
         navigate('/home');
       }
     } catch (error) {
