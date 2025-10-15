@@ -2,21 +2,25 @@ const { Habit } = require('../../db/models');
 
 module.exports = async (req, res, next) => {
   try {
-    // Проверяем, что пользователь владеет привычкой
+    const userRole = res.locals.user?.role;
+  
+    if (userRole === 'admin') {
+      return next();
+    }
+
     const habit = await Habit.findOne({
       where: {
         id: req.params.id,
-        userId: res.locals.userId // Используем userId из res.locals
+        userId: res.locals.userId
       }
     });
 
     if (!habit) {
       return res.status(403).json({
-        error: 'Доступ запрещён: это не ваша привычка или привычка не существует'
+        error: 'Доступ запрещён: это не ваша привычка'
       });
     }
-
-    // Сохраняем найденную привычку в запросе для последующего использования
+    
     req.habit = habit;
     next();
   } catch (error) {
