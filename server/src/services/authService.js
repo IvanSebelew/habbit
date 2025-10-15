@@ -3,7 +3,7 @@ const { Users } = require('../../db/models');
 const generateTokens = require('../utils/generateToken');
 
 class AuthService {
-  static async register({ username, email, password }) {
+  static async register({ username, email, password, role ='user' }) {
     if (!username || !email || !password) {
       throw new Error('Логин, email и пароль обязательны');
     }
@@ -18,7 +18,7 @@ class AuthService {
       username, 
       email, 
       password: hash,
-      role: 'user' 
+      role,
     });
 
     const { accessToken, refreshToken } = generateTokens(user);

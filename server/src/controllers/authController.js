@@ -24,9 +24,9 @@ class AuthController {
 
   static async register(req, res) {
     try {
-      const { username, email, password } = req.body;
-      const result = await AuthService.register({ username, email, password });
-      await this.handleAuthResponse(res, result);
+      const { username, email, password, role } = req.body;
+      const result = await AuthService.register({ username, email, password, role });
+      await AuthController.handleAuthResponse(res, result);
     } catch (error) {
       console.error('Register error:', error);
       const status = error.message.includes('обязательны') || 
@@ -39,7 +39,7 @@ class AuthController {
     try {
       const { username, password } = req.body;
       const result = await AuthService.login({ username, password });
-      await this.handleAuthResponse(res, result);
+      await AuthController.handleAuthResponse(res, result);
     } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ message: 'Попробуй еще разок' });

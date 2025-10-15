@@ -8,6 +8,7 @@ export function RegisterPage() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('user');
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -27,16 +28,16 @@ export function RegisterPage() {
     setIsLoading(true);
     setMessage('');
     try {
-      const res = await $api.post(
+      const response = await $api.post(
         '/auth/register',
-        { username, email, password },
-        
+        { username, email, password, role },
+
       );
 
-      if (res.status >= 200 && res.status < 300) {
+      if (response.status >= 200 && response.status < 300) {
         setMessage('Регистрация успешна! Перенаправляем на вход...');
         setAccessToken(response.data.accessToken);
-        
+
         console.log('✅ Регистрация успешна, токен сохранен:', {  ////JOPA
           accessToken: response.data.accessToken ? 'есть' : 'нет',
           username: response.data.username,
@@ -101,6 +102,19 @@ export function RegisterPage() {
               minLength={1}
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="role">Роль</label>
+            <select
+              id="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="role-select"
+            >
+              <option value="user">Пользователь</option>
+              <option value="admin">Администратор</option>
+            </select>
           </div>
 
           <button
