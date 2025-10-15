@@ -20,8 +20,8 @@ module.exports = async (req, res, next) => {
         error: 'Доступ запрещён: это не ваша привычка'
       });
     }
-    
-    res.locals.habit = habit;
+    req.habit = habit;
+    // res.locals.habit = habit;
     next();
   } catch (error) {
     console.error('Ошибка проверки владельца привычки:', error);
