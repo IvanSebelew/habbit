@@ -1,18 +1,16 @@
 
 require('dotenv').config();
-const express = require('express');
-const morgan = require('morgan');
-const bcrypt = require('bcrypt');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const db = require('./db/models');
-const authRoutes = require('./src/routes/authRoutes');
-const habitRoutes = require('./src/routes/habitRoutes')
+const express = 'express';
+const morgan = 'morgan';
+const cors = 'cors';
+const cookieParser = 'cookie-parser';
+const authRoutes = './src/routes/authRoutes';
+const habitRoutes = './src/routes/habitRoutes';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-app.use(express.json());
+app.use(json());
 app.use(cookieParser());
 app.use(morgan('dev'));
 app.use(cors({
@@ -25,12 +23,7 @@ app.use(cors({
 app.use('/auth', authRoutes);
 app.use('/habits', habitRoutes);
 
-(async () => {
-    try {
-        await db.sequelize.authenticate();
-        console.log('✔  PostgreSQL connected');
-        app.listen(PORT, () => console.log(`🚀  Server on :${PORT}`));
-    } catch (err) {
-        console.error('✖  DB connection error:', err);
-    }
-})();
+
+app.listen(PORT, () => {
+    console.log(`server started: ${PORT}`)
+})
