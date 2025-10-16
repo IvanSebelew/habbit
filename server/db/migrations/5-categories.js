@@ -10,10 +10,19 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       templateId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Templates',
+          key: 'id'
+        }
       },
       categoryId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Categories',
+          key: 'id'
+        }
+
       },
       createdAt: {
         allowNull: false,
