@@ -7,7 +7,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const authRoutes = require('./src/routes/authRoutes');
-const habitRoutes = require('./src/routes/habitRoutes')
+const habitRoutes = require('./src/routes/habitRoutes');
+const templateRoutes = require('./src/routes/templateRoutes')
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -24,7 +25,7 @@ app.use(cors({
 
 app.use('/auth', authRoutes);
 app.use('/habits', habitRoutes);
-
+app.use('/templates', templateRoutes)
 
 app.listen(PORT, () => {
     console.log(`server started: ${PORT}`)
