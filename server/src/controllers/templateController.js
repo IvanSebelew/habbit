@@ -7,7 +7,7 @@ class TemplateController {
       const templates = await TemplateService.getAllTemplates();
       res.json(templates);
     } catch (error) {
-      res.status(500).json({ message: 'Ошибка загрузки шаблонов' });
+      res.status(500).json({ message: 'Ошибка загрузки шаблонов getAllTemplates' });
     }
   }
 
