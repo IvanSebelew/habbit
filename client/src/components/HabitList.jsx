@@ -16,7 +16,6 @@ const HabitList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Загрузка привычек
   useEffect(() => {
     fetchHabits();
   }, []);
@@ -33,7 +32,6 @@ const HabitList = () => {
     }
   };
 
-  // Добавление привычки
   const handleAddHabit = async (e) => {
     e.preventDefault();
     if (newHabit.title.trim() === '') return;
@@ -51,8 +49,7 @@ const HabitList = () => {
     }
   };
 
-  // Обновление привычки
-  const handleUpdateHabit = async (e) => {
+   const handleUpdateHabit = async (e) => {
     e.preventDefault();
     if (editingHabit.title.trim() === '') return;
     
@@ -77,10 +74,8 @@ const HabitList = () => {
     }
   };
 
-  // Удаление привычки
   const handleDeleteHabit = async (habitId) => {
-    if (!window.confirm('Удалить эту привычку?')) return;
-    
+      
     try {
       await $api.delete(`/habits/${habitId}`);
       const updatedHabits = habits.filter(habit => {
@@ -93,8 +88,7 @@ const HabitList = () => {
     }
   };
 
-  // Переключение статуса
-  const handleToggleHabit = async (habitId) => {
+   const handleToggleHabit = async (habitId) => {
     try {
       const response = await $api.patch(`/habits/${habitId}/toggle`);
       const updatedHabits = habits.map(habit => {
@@ -110,7 +104,6 @@ const HabitList = () => {
     }
   };
 
-  // Начало редактирования
   const startEditing = (habit) => {
     setEditingHabit({ 
       id: habit.id, 
@@ -119,13 +112,11 @@ const HabitList = () => {
     });
   };
 
-  // Отмена редактирования
-  const cancelEditing = () => {
+   const cancelEditing = () => {
     setEditingHabit({ id: null, title: '', frequency: 'daily' });
   };
 
-  // Обработчик изменений в полях ввода
-  const handleInputChange = (e) => {
+   const handleInputChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     
@@ -152,8 +143,7 @@ const HabitList = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      {/* Форма добавления привычки */}
-      <form onSubmit={handleAddHabit} className="habit-form">
+          <form onSubmit={handleAddHabit} className="habit-form">
         <input
           type="text"
           name="title"
@@ -174,8 +164,7 @@ const HabitList = () => {
         <button type="submit" className="btn-primary">Добавить</button>
       </form>
 
-      {/* Форма редактирования привычки */}
-      {editingHabit.id && (
+            {editingHabit.id && (
         <form onSubmit={handleUpdateHabit} className="habit-form editing">
           <h3>Редактирование привычки</h3>
           <input
@@ -203,9 +192,7 @@ const HabitList = () => {
           </div>
         </form>
       )}
-    
-      {/* Список привычек */}
-      <div className="habits-container">
+          <div className="habits-container">
         {habits.length === 0 ? (
           <p className="no-habits">У вас пока нет привычек. Добавьте первую!</p>
         ) : (

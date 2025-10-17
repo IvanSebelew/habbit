@@ -11,8 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       this.belongsToMany(models.Categories, {
-        through: 'templatesCategories',
+        through: 'TemplatesCategories',
         foreignKey: 'templateId',
+        otherKey: 'categoryId',
         as: 'categories'
       })
     }

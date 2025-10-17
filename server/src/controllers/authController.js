@@ -40,7 +40,7 @@ class AuthController {
       await AuthController.handleAuthResponse(res, result);
     } catch (error) {
       console.error('Login error:', error);
-      res.status(500).json({ message: 'Попробуй еще разок' });
+      res.status(500).json({ message: 'Не верный логин или пароль' });
     }
   }
 

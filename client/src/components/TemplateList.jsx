@@ -27,15 +27,15 @@ const TemplateList = () => {
   const createHabit = async (templateId) => {
     try {
       await $api.post(`/templates/${templateId}/habits`);
-      alert('Привычка создана!');
+      // alert('Привычка создана!');
       navigate('/home');
     } catch {
       setError('Ошибка создания привычки');
     }
   };
 
-  const allCategoryNames = templates.map(template => 
-    template.Categories.map(category => category.name)
+  const allCategoryNames = templates.map(template =>
+    template.categories?.map(category => category.name) || []
   ).flat();
 
   const uniqueCategories = [...new Set(allCategoryNames)];
@@ -44,8 +44,8 @@ const TemplateList = () => {
 
   let filteredTemplates = templates;
   if (selectedCategory !== 'all') {
-    filteredTemplates = templates.filter(template => 
-      template.Categories.some(category => category.name === selectedCategory)
+    filteredTemplates = templates.filter(template =>
+      template.categories?.some(category => category.name === selectedCategory)
     );
   }
 
@@ -57,8 +57,8 @@ const TemplateList = () => {
 
       <div className="filter">
         <label>Категория: </label>
-        <select 
-          value={selectedCategory} 
+        <select
+          value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
           {categories.map(category => (
@@ -74,14 +74,15 @@ const TemplateList = () => {
           <div key={template.id} className="template-card">
             <h3>{template.title}</h3>
             <p>{template.description}</p>
-            
+
             <div className="info">
               <span>{template.frequency === 'daily' ? 'Ежедневно' : 'Еженедельно'}</span>
-              <span>👍 {template.popularity}</span>
+              {/* <span>👍 {template.popularity}</span> */}
             </div>
 
             <div className="categories">
-              {template.Categories.map(category => (
+              {/* ИСПРАВЛЕНО: заменил кириллическую "с" на латинскую */}
+              {template.categories?.map(category => (
                 <span key={category.id} className="tag">{category.name}</span>
               ))}
             </div>

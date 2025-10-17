@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsToMany(models.Templates, {
         through: 'templatesCategories',
         foreignKey: 'categoryId',
+        otherKey: 'templateId',
         as: 'templates'
       })
     }

@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false
       },
       frequency: {
-        type: Sequelize.ENUM('daily', 'weekly'),
+        type: Sequelize.ENUM('daily', 'weekly', 'monthly'),
         defaultValue: 'daily'
       },
       completed: {

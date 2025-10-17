@@ -22,13 +22,11 @@ class TemplateService {
     }
   }
 
-  // Только создать привычку из шаблона
   static async createHabitFromTemplate(userId, templateId) {
     try {
       const template = await Templates.findByPk(templateId);
       if (!template) throw new Error('Шаблон не найден');
 
-      // Используем ТВОЙ существующий HabitService
       const HabitService = require('./habitService');
       const habit = await HabitService.createHabit(userId, {
         title: template.title,
