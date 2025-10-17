@@ -1,12 +1,15 @@
-const { Template, Category } = require('../../db/models');
+const { Templates, Categories } = require('../../db/models')
+
 
 class TemplateService {
   // Только получить все шаблоны с категориями
   static async getAllTemplates() {
     try {
-      const templates = await Template.findAll({
+      
+          const templates = await Templates.findAll({
         include: [{
-          model: Category,
+          model: Categories,
+          as: 'categories',
           through: { attributes: [] },
           attributes: ['id', 'name']
         }],
@@ -22,7 +25,7 @@ class TemplateService {
   // Только создать привычку из шаблона
   static async createHabitFromTemplate(userId, templateId) {
     try {
-      const template = await Template.findByPk(templateId);
+      const template = await Templates.findByPk(templateId);
       if (!template) throw new Error('Шаблон не найден');
 
       // Используем ТВОЙ существующий HabitService
