@@ -1,40 +1,35 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './loginPage.css';
+import { useNavigate, Link } from 'react-router-dom';
+import { Form, Input, Button, Card, Typography, Space, Alert, Layout } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import $api from '../../utils/axiosWithAuth';
 import { setAccessToken } from '../../utils/tokenStore';
 
+const { Title, Text } = Typography;
+const { Content } = Layout;
+
 export function LoginPage() {
-  const [username, setUsername] = useState(''); 
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!username || !password) {
-      setMessage('Заполните все поля');
-      return;
-    }
-
+  const handleSubmit = async (values) => {
     setIsLoading(true);
+    setMessage('');
 
     try {
-      const response = await $api.post(
-        '/auth/login',
-        { username, password }, 
-        
-      );
+      const response = await $api.post('/auth/login', values);
 
       if (response.status === 200) {
         setAccessToken(response.data.accessToken);
-         console.log('✅ Логин успешен, токен сохранен:', {
+        
+        console.log('✅ Логин успешен, токен сохранен:', {
           accessToken: response.data.accessToken ? 'есть' : 'нет',
           username: response.data.username,
           role: response.data.role
         });
+        
         navigate('/home');
       }
     } catch (error) {
@@ -47,53 +42,80 @@ export function LoginPage() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h2 className="login-title">Вход в аккаунт</h2>
+    <Layout style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+      <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
+        <Card 
+          style={{ 
+            width: 400, 
+            boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+            borderRadius: '8px'
+          }}
+        >
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            <div style={{ textAlign: 'center' }}>
+              <Title level={2}>🎯 TrackHabit</Title>
+              <Text type="secondary">Войдите в свой аккаунт</Text>
+            </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="username">Логин</label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
+            {message && (
+              <Alert 
+                message={message} 
+                type="error" 
+                showIcon 
+                closable 
+              />
+            )}
 
-          <div className="form-group">
-            <label htmlFor="password">Пароль</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            
-          </div>
+            <Form
+              form={form}
+              name="login"
+              onFinish={handleSubmit}
+              layout="vertical"
+              size="large"
+            >
+              <Form.Item
+                name="username"
+                label="Логин"
+                rules={[{ required: true, message: 'Введите логин' }]}
+              >
+                <Input 
+                  prefix={<UserOutlined />} 
+                  placeholder="Ваш логин" 
+                />
+              </Form.Item>
 
-          <button
-            type="submit"
-            className="submit-btn"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Вход...' : 'Войти'}
-          </button>
-        </form>
+              <Form.Item
+                name="password"
+                label="Пароль"
+                rules={[{ required: true, message: 'Введите пароль' }]}
+              >
+                <Input.Password
+                  prefix={<LockOutlined />}
+                  placeholder="Ваш пароль"
+                />
+              </Form.Item>
 
-        {message && (
-          <div className={`message ${message.includes('успешн') ? 'success' : 'error'}`}>
-            {message}
-          </div>
-        )}
+              <Form.Item>
+                <Button 
+                  type="primary" 
+                  htmlType="submit" 
+                  loading={isLoading}
+                  style={{ width: '100%' }}
+                >
+                  {isLoading ? 'Вход...' : 'Войти'}
+                </Button>
+              </Form.Item>
+            </Form>
 
-        <div className="register-link">
-          Нет аккаунта? <a href="/register">Зарегистрироваться</a>
-        </div>
-      </div>
-    </div>
+            <div style={{ textAlign: 'center' }}>
+              <Text type="secondary">
+                Нет аккаунта?{' '}
+                <Link to="/register">Зарегистрироваться</Link>
+              </Text>
+            </div>
+          </Space>
+        </Card>
+      </Content>
+    </Layout>
   );
 }

@@ -1,7 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import TemplateList from '../../components/TemplateList'; // компонент шаблонов
+import TemplateList from '../../components/TemplateList';
+import { Layout, Button, Typography } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import './TemplatesPage.css';
+
+const { Header, Content } = Layout;
+const { Title } = Typography;
 
 export function TemplatesPage() {
   const navigate = useNavigate();
@@ -11,15 +16,26 @@ export function TemplatesPage() {
   };
 
   return (
-    <div className="templates-page">
-      <header className="header">
-        <button onClick={handleBack} className="back-button">← Назад</button>
-        <h1>Галерея шаблонов</h1>
-        <div className="header-spacer"></div>
-      </header>
+    <Layout style={{ minHeight: '100vh' }}>
+      <Header style={{ background: '#001529', padding: '0 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <Button 
+            type="text" 
+            icon={<ArrowLeftOutlined />} 
+            onClick={handleBack}
+            style={{ color: 'white' }}
+          >
+            Назад
+          </Button>
+          <Title level={3} style={{ color: 'white', margin: 0 }}>
+            Галерея шаблонов
+          </Title>
+        </div>
+      </Header>
       
-      {/* Здесь рендерится функционал шаблонов */}
-      <TemplateList />
-    </div>
+      <Content style={{ padding: '20px' }}>
+        <TemplateList />
+      </Content>
+    </Layout>
   );
 }

@@ -20,7 +20,7 @@ module.exports = function authMiddleware(req, res, next) {
     const decoded = verifyToken(accessToken, JWT_SECRET);
     if (decoded) {
       res.locals.userId = decoded.userId;
-      res.locals.user = decoded; // ← ДОБАВИЛ полную информацию о пользователе
+      res.locals.user = decoded; 
       return next();
     }
   }
@@ -36,6 +36,6 @@ module.exports = function authMiddleware(req, res, next) {
   }
 
   res.locals.userId = decoded.userId;
-  res.locals.user = decoded; // ← ДОБАВИЛ полную информацию о пользователе
+  res.locals.user = decoded; 
   next();
 };

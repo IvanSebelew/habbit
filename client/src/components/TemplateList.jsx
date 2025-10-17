@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import $api from '../utils/axiosWithAuth';
+import { Card, Button, Select, Row, Col, Tag, message, Spin, Space, Alert } from 'antd';
 import './TemplateList.css';
+
+const { Option } = Select;
 
 const TemplateList = () => {
   const [templates, setTemplates] = useState([]);
@@ -27,10 +30,10 @@ const TemplateList = () => {
   const createHabit = async (templateId) => {
     try {
       await $api.post(`/templates/${templateId}/habits`);
-      // alert('Привычка создана!');
+      message.success('Привычка создана!');
       navigate('/home');
     } catch {
-      setError('Ошибка создания привычки');
+      message.error('Ошибка создания привычки');
     }
   };
 
@@ -49,50 +52,80 @@ const TemplateList = () => {
     );
   }
 
-  if (loading) return <div>Загрузка...</div>;
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '50px' }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className="template-list">
-      {error && <div className="error">{error}</div>}
+      {error && (
+        <Alert
+          message="Ошибка"
+          description={error}
+          type="error"
+          showIcon
+          style={{ marginBottom: '20px' }}
+        />
+      )}
 
-      <div className="filter">
-        <label>Категория: </label>
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          {categories.map(category => (
-            <option key={category} value={category}>
-              {category === 'all' ? 'Все категории' : category}
-            </option>
-          ))}
-        </select>
+      <div className="filter" style={{ marginBottom: '20px' }}>
+        <Space>
+          <span>Категория:</span>
+          <Select
+            value={selectedCategory}
+            onChange={setSelectedCategory}
+            style={{ width: 200 }}
+          >
+            {categories.map(category => (
+              <Option key={category} value={category}>
+                {category === 'all' ? 'Все категории' : category}
+              </Option>
+            ))}
+          </Select>
+        </Space>
       </div>
 
-      <div className="templates">
+      <Row gutter={[16, 16]}>
         {filteredTemplates.map(template => (
-          <div key={template.id} className="template-card">
-            <h3>{template.title}</h3>
-            <p>{template.description}</p>
+          <Col xs={24} sm={12} lg={8} key={template.id}>
+            <Card
+              title={template.title}
+              style={{ height: '100%' }}
+              actions={[
+                <Button 
+                  type="primary" 
+                  onClick={() => createHabit(template.id)}
+                  style={{ width: '100%' }}
+                >
+                  Создать привычку
+                </Button>
+              ]}
+            >
+              <p style={{ marginBottom: '16px' }}>{template.description}</p>
 
-            <div className="info">
-              <span>{template.frequency === 'daily' ? 'Ежедневно' : 'Еженедельно'}</span>
-              {/* <span>👍 {template.popularity}</span> */}
-            </div>
-
-            <div className="categories">
-              {/* ИСПРАВЛЕНО: заменил кириллическую "с" на латинскую */}
-              {template.categories?.map(category => (
-                <span key={category.id} className="tag">{category.name}</span>
-              ))}
-            </div>
-
-            <button onClick={() => createHabit(template.id)}>
-              Создать привычку
-            </button>
-          </div>
+              <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                <div>
+                  <Tag color={template.frequency === 'daily' ? 'blue' : 'green'}>
+                    {template.frequency === 'daily' ? 'Ежедневно' : 'Еженедельно'}
+                  </Tag>
+                </div>
+                
+                <div>
+                  {template.categories?.map(category => (
+                    <Tag key={category.id} color="purple">
+                      {category.name}
+                    </Tag>
+                  ))}
+                </div>
+              </Space>
+            </Card>
+          </Col>
         ))}
-      </div>
+      </Row>
     </div>
   );
 };

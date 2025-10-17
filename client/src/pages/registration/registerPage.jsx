@@ -1,142 +1,163 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './registerPage.css';
+import { useNavigate, Link } from 'react-router-dom';
+import { Form, Input, Button, Select, Card, Typography, Space, Alert, Layout } from 'antd';
+import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
 import $api from '../../utils/axiosWithAuth';
 import { setAccessToken } from '../../utils/tokenStore';
 
+const { Title, Text } = Typography;
+const { Option } = Select;
+const { Content } = Layout;
+
 export function RegisterPage() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('user');
-  const navigate = useNavigate();
+  const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('error');
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!username.trim() || !email.trim() || !password.trim()) {
-      setMessage('Все поля обязательны для заполнения');
-      return;
-    }
-
-    if (password.length < 1) {
-      setMessage('Пароль должен содержать минимум 1 символов');
-      return;
-    }
+  const handleSubmit = async (values) => {
     setIsLoading(true);
     setMessage('');
-    try {
-      const response = await $api.post(
-        '/auth/register',
-        { username, email, password, role },
 
-      );
+    try {
+      const response = await $api.post('/auth/register', values);
 
       if (response.status >= 200 && response.status < 300) {
-        setMessage('Регистрация успешна! Перенаправляем на вход...');
+        setMessage('Регистрация успешна! Перенаправляем...');
+        setMessageType('success');
         setAccessToken(response.data.accessToken);
 
-        console.log('✅ Регистрация успешна, токен сохранен:', {  ////JOPA
+        console.log('✅ Регистрация успешна, токен сохранен:', {
           accessToken: response.data.accessToken ? 'есть' : 'нет',
           username: response.data.username,
           role: response.data.role
         });
+        
         setTimeout(() => navigate('/home'), 1500);
       }
     } catch (error) {
+      let errorMessage = 'Ошибка сервера. Пожалуйста, попробуйте позже';
+      
       if (error.response?.data?.message) {
-        setMessage(error.response.data.message);
+        errorMessage = error.response.data.message;
       } else if (error.response?.status === 409) {
-        setMessage('Пользователь с таким именем или email уже существует');
-      } else {
-        setMessage('Ошибка сервера. Пожалуйста, попробуйте позже');
+        errorMessage = 'Пользователь с таким именем или email уже существует';
       }
+      
+      setMessage(errorMessage);
+      setMessageType('error');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h2 className="register-title">Создать аккаунт</h2>
+    <Layout style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+      <Content style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
+        <Card 
+          style={{ 
+            width: 400, 
+            boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+            borderRadius: '8px'
+          }}
+        >
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            <div style={{ textAlign: 'center' }}>
+              <Title level={2}>🎯 TrackHabit</Title>
+              <Text type="secondary">Создайте новый аккаунт</Text>
+            </div>
 
-        <form onSubmit={handleSubmit} className="register-form">
+            {message && (
+              <Alert 
+                message={message} 
+                type={messageType} 
+                showIcon 
+                closable 
+              />
+            )}
 
-          <div className="form-group">
-            <label htmlFor="username">Имя пользователя</label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Придумайте уникальное имя"
-              required
-            />
-          </div>
-
-
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Ваш email"
-              required
-            />
-          </div>
-
-
-          <div className="form-group">
-            <label htmlFor="password">Пароль</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Не менее 1 символов"
-              minLength={1}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="role">Роль</label>
-            <select
-              id="role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="role-select"
+            <Form
+              form={form}
+              name="register"
+              onFinish={handleSubmit}
+              layout="vertical"
+              size="large"
             >
-              <option value="user">Пользователь</option>
-              <option value="admin">Администратор</option>
-            </select>
-          </div>
+              <Form.Item
+                name="username"
+                label="Имя пользователя"
+                rules={[
+                  { required: true, message: 'Введите имя пользователя' },
+                  { min: 2, message: 'Имя должно содержать минимум 2 символа' }
+                ]}
+              >
+                <Input 
+                  prefix={<UserOutlined />} 
+                  placeholder="Придумайте уникальное имя" 
+                />
+              </Form.Item>
 
-          <button
-            type="submit"
-            className="submit-btn"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
-          </button>
-        </form>
+              <Form.Item
+                name="email"
+                label="Email"
+                rules={[
+                  { required: true, message: 'Введите email' },
+                  { type: 'email', message: 'Некорректный email' }
+                ]}
+              >
+                <Input 
+                  prefix={<MailOutlined />} 
+                  placeholder="Ваш email" 
+                />
+              </Form.Item>
 
+              <Form.Item
+                name="password"
+                label="Пароль"
+                rules={[
+                  { required: true, message: 'Введите пароль' },
+                  { min: 1, message: 'Пароль должен содержать минимум 1 символ' }
+                ]}
+              >
+                <Input.Password
+                  prefix={<LockOutlined />}
+                  placeholder="Не менее 1 символа"
+                />
+              </Form.Item>
 
-        {message && (
-          <div className={`message ${message.includes('успешна') ? 'success' : 'error'}`}>
-            {message}
-          </div>
-        )}
+              <Form.Item
+                name="role"
+                label="Роль"
+                initialValue="user"
+              >
+                <Select>
+                  <Option value="user">Пользователь</Option>
+                  <Option value="admin">Администратор</Option>
+                </Select>
+              </Form.Item>
 
-        <div className="login-link">
-          Уже есть аккаунт? <a href="/login">Войти</a>
-        </div>
-      </div>
-    </div>
+              <Form.Item>
+                <Button 
+                  type="primary" 
+                  htmlType="submit" 
+                  loading={isLoading}
+                  style={{ width: '100%' }}
+                >
+                  {isLoading ? 'Регистрация...' : 'Зарегистрироваться'}
+                </Button>
+              </Form.Item>
+            </Form>
+
+            <div style={{ textAlign: 'center' }}>
+              <Text type="secondary">
+                Уже есть аккаунт?{' '}
+                <Link to="/login">Войти</Link>
+              </Text>
+            </div>
+          </Space>
+        </Card>
+      </Content>
+    </Layout>
   );
 }
