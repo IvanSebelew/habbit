@@ -40,3 +40,22 @@
 .logout-button:hover {
   background-color: #e8e0ff;
 }
+
+.user-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.templates-button {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.templates-button:hover {
+  background: #138496;
+}

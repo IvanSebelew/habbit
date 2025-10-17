@@ -26,9 +26,7 @@ const HabitList = () => {
       setLoading(true);
       const response = await $api.get('/habits');
       setHabits(response.data);
-      setError('');
-    } catch (error) {
-      console.error('Ошибка загрузки привычек:', error);
+    } catch {
       setError('Не удалось загрузить привычки');
     } finally {
       setLoading(false);
@@ -36,9 +34,9 @@ const HabitList = () => {
   };
 
   // Добавление привычки
-  const handleAdd = async (e) => {
+  const handleAddHabit = async (e) => {
     e.preventDefault();
-    if (!newHabit.title.trim()) return;
+    if (newHabit.title.trim() === '') return;
     
     try {
       const response = await $api.post('/habits', {
@@ -48,62 +46,71 @@ const HabitList = () => {
       setHabits([...habits, response.data]);
       setNewHabit({ title: '', frequency: 'daily' });
       setError('');
-    } catch (error) {
-      console.error('Ошибка создания привычки:', error);
+    } catch {
       setError('Не удалось создать привычку');
     }
   };
 
-  // Редактирование привычки
-  const handleEdit = async (e) => {
+  // Обновление привычки
+  const handleUpdateHabit = async (e) => {
     e.preventDefault();
-    if (!editingHabit.title.trim()) return;
+    if (editingHabit.title.trim() === '') return;
     
     try {
       const response = await $api.put(`/habits/${editingHabit.id}`, {
         title: editingHabit.title.trim(),
         frequency: editingHabit.frequency
       });
-      setHabits(habits.map(habit => 
-        habit.id === editingHabit.id ? response.data : habit
-      ));
+      
+      const updatedHabits = habits.map(habit => {
+        if (habit.id === editingHabit.id) {
+          return response.data;
+        }
+        return habit;
+      });
+      
+      setHabits(updatedHabits);
       setEditingHabit({ id: null, title: '', frequency: 'daily' });
       setError('');
-    } catch (error) {
-      console.error('Ошибка обновления привычки:', error);
+    } catch {
       setError('Не удалось обновить привычку');
     }
   };
 
   // Удаление привычки
-  const handleDelete = async (habitId) => {
+  const handleDeleteHabit = async (habitId) => {
     if (!window.confirm('Удалить эту привычку?')) return;
     
     try {
       await $api.delete(`/habits/${habitId}`);
-      setHabits(habits.filter(habit => habit.id !== habitId));
+      const updatedHabits = habits.filter(habit => {
+        return habit.id !== habitId;
+      });
+      setHabits(updatedHabits);
       setError('');
-    } catch (error) {
-      console.error('Ошибка удаления привычки:', error);
+    } catch {
       setError('Не удалось удалить привычку');
     }
   };
 
-  // Переключение статуса выполнения
-  const handleToggle = async (habitId) => {
+  // Переключение статуса
+  const handleToggleHabit = async (habitId) => {
     try {
       const response = await $api.patch(`/habits/${habitId}/toggle`);
-      setHabits(habits.map(habit => 
-        habit.id === habitId ? response.data : habit
-      ));
+      const updatedHabits = habits.map(habit => {
+        if (habit.id === habitId) {
+          return response.data;
+        }
+        return habit;
+      });
+      setHabits(updatedHabits);
       setError('');
-    } catch (error) {
-      console.error('Ошибка переключения статуса:', error);
+    } catch {
       setError('Не удалось обновить статус');
     }
   };
 
-  // Запуск редактирования
+  // Начало редактирования
   const startEditing = (habit) => {
     setEditingHabit({ 
       id: habit.id, 
@@ -112,19 +119,27 @@ const HabitList = () => {
     });
   };
 
-  // Обработчик изменений в форме
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (editingHabit.id) {
-      setEditingHabit({ ...editingHabit, [name]: value });
-    } else {
-      setNewHabit({ ...newHabit, [name]: value });
-    }
-  };
-
   // Отмена редактирования
   const cancelEditing = () => {
     setEditingHabit({ id: null, title: '', frequency: 'daily' });
+  };
+
+  // Обработчик изменений в полях ввода
+  const handleInputChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    
+    if (editingHabit.id) {
+      setEditingHabit({
+        ...editingHabit,
+        [name]: value
+      });
+    } else {
+      setNewHabit({
+        ...newHabit,
+        [name]: value
+      });
+    }
   };
 
   if (loading) {
@@ -137,20 +152,21 @@ const HabitList = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      <form onSubmit={handleAdd} className="habit-form">
+      {/* Форма добавления привычки */}
+      <form onSubmit={handleAddHabit} className="habit-form">
         <input
           type="text"
           name="title"
           placeholder="Название привычки"
           value={newHabit.title}
-          onChange={handleChange}
+          onChange={handleInputChange}
           required
           maxLength={255}
         />
         <select
           name="frequency"
           value={newHabit.frequency}
-          onChange={handleChange}
+          onChange={handleInputChange}
         >
           <option value="daily">Ежедневно</option>
           <option value="weekly">Еженедельно</option>
@@ -158,22 +174,23 @@ const HabitList = () => {
         <button type="submit" className="btn-primary">Добавить</button>
       </form>
 
+      {/* Форма редактирования привычки */}
       {editingHabit.id && (
-        <form onSubmit={handleEdit} className="habit-form editing">
+        <form onSubmit={handleUpdateHabit} className="habit-form editing">
           <h3>Редактирование привычки</h3>
           <input
             type="text"
             name="title"
             placeholder="Название привычки"
             value={editingHabit.title}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             maxLength={255}
           />
           <select
             name="frequency"
             value={editingHabit.frequency}
-            onChange={handleChange}
+            onChange={handleInputChange}
           >
             <option value="daily">Ежедневно</option>
             <option value="weekly">Еженедельно</option>
@@ -187,49 +204,57 @@ const HabitList = () => {
         </form>
       )}
     
+      {/* Список привычек */}
       <div className="habits-container">
         {habits.length === 0 ? (
           <p className="no-habits">У вас пока нет привычек. Добавьте первую!</p>
         ) : (
           <ul className="habits-list">
-            {habits.map((habit) => (
-              <li key={habit.id} className={`habit-item ${habit.completed ? 'completed' : ''}`}>
-                <div className="habit-info">
-                  <span className="habit-title">{habit.title}</span>
-                  <span className="habit-meta">
-                    {habit.frequency === 'daily' ? 'Ежедневно' : 'Еженедельно'}
-                    {habit.owner && <span className="habit-owner"> • {habit.owner}</span>}
-                  </span>
-                </div>
-                
-                <div className="habit-actions">
-                  <button 
-                    onClick={() => handleToggle(habit.id)} 
-                    className={`toggle-btn ${habit.completed ? 'completed' : ''}`}
-                  >
-                    {habit.completed ? '✅' : '⚪'}
-                  </button>
+            {habits.map((habit) => {
+              const itemClass = habit.completed ? 'habit-item completed' : 'habit-item';
+              const frequencyText = habit.frequency === 'daily' ? 'Ежедневно' : 'Еженедельно';
+              const toggleIcon = habit.completed ? '✅' : '⚪';
+              const canEdit = !habit.completed;
+
+              return (
+                <li key={habit.id} className={itemClass}>
+                  <div className="habit-info">
+                    <span className="habit-title">{habit.title}</span>
+                    <span className="habit-meta">
+                      {frequencyText}
+                      {habit.owner && <span className="habit-owner"> • {habit.owner}</span>}
+                    </span>
+                  </div>
                   
-                  {!habit.completed && (
+                  <div className="habit-actions">
                     <button 
-                      onClick={() => startEditing(habit)}
-                      className="btn-edit"
-                      title="Редактировать"
+                      onClick={() => handleToggleHabit(habit.id)} 
+                      className={`toggle-btn ${habit.completed ? 'completed' : ''}`}
                     >
-                      ✏️
+                      {toggleIcon}
                     </button>
-                  )}
-                  
-                  <button 
-                    onClick={() => handleDelete(habit.id)}
-                    className="btn-delete"
-                    title="Удалить"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </li>
-            ))}
+                    
+                    {canEdit && (
+                      <button 
+                        onClick={() => startEditing(habit)}
+                        className="btn-edit"
+                        title="Редактировать"
+                      >
+                        ✏️
+                      </button>
+                    )}
+                    
+                    <button 
+                      onClick={() => handleDeleteHabit(habit.id)}
+                      className="btn-delete"
+                      title="Удалить"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
