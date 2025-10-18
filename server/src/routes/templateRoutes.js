@@ -5,8 +5,8 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 router.use(authMiddleware);
 
-// Только 2 эндпоинта:
-router.get('/', TemplateController.getAll); // GET /templates
-router.post('/:templateId/habits', TemplateController.createHabit); // POST /templates/5/habits
+
+router.get('/', TemplateController.getAll); 
+router.post('/:templateId/habits', TemplateController.createHabit); 
 
 module.exports = router;
